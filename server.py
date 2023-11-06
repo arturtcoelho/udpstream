@@ -1,88 +1,105 @@
-# ----- An UDP streaming server in Python that sends sensor reading values -----
-
 import json
 import socket
 import sys
 import time
 import threading
+import argparse
+import logging
 
-from log import log
+# Parse command-line arguments using argparse
+parser = argparse.ArgumentParser(description="UDP Streaming Server")
+parser.add_argument('--timer', type=float, default=0.1, help="Time delay between data packets (optional)")
+parser.add_argument('--log_file', type=str, default=None, help="Log file path (optional)")
+parser.add_argument('--verbose', action='store_true', help="Enable verbose logging (optional)")
+parser.add_argument('--port', type=int, default=7070, help="Server port (optional)")
+args = parser.parse_args()
 
-try:
-    timer = float(sys.argv[1])
-except Exception:
-    timer = 0.1
+# Extract command-line arguments
+timer = args.timer
+log_file = args.log_file
+verbose = args.verbose
+serverPort = args.port
 
-try:
-    log_file = sys.argv[2]
-except Exception:
-    log_file = 'server.log'
+# Set up the logging configuration
+logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO,
+                    format=' server   | %(asctime)s %(levelname)-8s %(message)s',
+                    filename=log_file)
 
-serverAddress = (serverIp, serverPort) = ("127.0.0.1", 7070)
+# Create a logger instance
+logger = logging.getLogger('udp_streaming_server')
 
-# Create a datagram based server socket that uses IPv4 addressing scheme
+# Define the server address
+serverAddress = (serverIp, serverPort) = ("127.0.0.1", serverPort)
+
+# Log server startup
+logger.info(f"Starting UDP server on {serverIp}:{serverPort}")
+
+# Create a datagram-based server socket using IPv4 addressing scheme
 datagramSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 datagramSocket.bind(serverAddress)
 
-# Load the sensor data from the file
+# Load sensor data from a JSON file
 with open("data.json", "r") as f:
     sensorData = json.load(f)
 
+# Initialize packet number and a set of registered clients
 packetNumber = 0
-
-print(f"UDP server is streaming on {serverIp}:{serverPort}")
-
-# A set of clients that are registered to receive the sensor data
 clients = set()
 
-
+# Function to wait for new clients to register
 def wait_for_new_clients():
     try:
         while True:
             data, address = datagramSocket.recvfrom(1024)
+            ip, port = address
+
             if data == b"register":
                 clients.add(address)
-                log(f"Registered client {address}", log_file)
+                logger.info(f"Registered client {ip}:{port}")
+
             if data == b"quit":
                 clients.remove(address)
-                log(f"Removed client {address}", log_file)
+                logger.info(f"Removed client {ip}:{port}")
 
-    # If the socket is closed, stop the thread
     except OSError:
-        log("Server is shutting down", log_file)
+        logger.info("Server is shutting down")
 
-# Send the message to all registered clients
+# Function to send a message to all registered clients
 def send_to_clients(message):
     if len(clients) > 0:
         for client in clients:
+            ip, port = client
             datagramSocket.sendto(message, client)
-            # log(f"Sent {message} to {client}", log_file)
+            logger.debug(f"Sent message '{message.decode()}' to {ip}:{port}")
 
-# Register a thread that waits for new clients
+# Start a thread to wait for new clients
 butler = threading.Thread(target=wait_for_new_clients)
 butler.start()
 
-# Wait for new clients to register
-log("Waiting for any client to register...", log_file)
+# Wait for at least one client to register
+logger.info("Waiting for any client to register...")
 while len(clients) == 0:
     time.sleep(1)
+
+logger.info("Streaming started")
 
 try:
     # Start streaming the sensor data
     for item in sensorData:
-        # Send the data to the client
+        # Send the data to the clients
         packetNumber += 1
         message = f"{packetNumber} {item}".encode()
         send_to_clients(message)
-
         time.sleep(timer)
-    send_to_clients('end'.encode())
-except KeyboardInterrupt:
-    send_to_clients('end'.encode())
+    send_to_clients(b'end')
 
+except KeyboardInterrupt:
+    send_to_clients(b'end')
+
+logger.info("Streaming finished")
 datagramSocket.close()
 
 try:
     butler.join()
 except KeyboardInterrupt:
-    log("Server is shutting down", log_file)
+    logger.info("Server is shutting down")
