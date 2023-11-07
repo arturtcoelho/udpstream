@@ -1,0 +1,6 @@
+ client 1 | 2023-11-06 21:37:38,487 INFO     Starting UDP client 1
+ client 1 | 2023-11-06 21:37:38,487 INFO     Sent register message to server 127.0.0.1:7070
+ client 1 | 2023-11-06 21:38:08,815 INFO     Got end of transmission
+ client 1 | 2023-11-06 21:38:08,815 INFO     Lost packets: 0
+ client 1 | 2023-11-06 21:38:08,815 INFO     Out of order packets: 0
+ client 1 | 2023-11-06 21:38:08,815 INFO     Standard deviation: 1718.4913638064

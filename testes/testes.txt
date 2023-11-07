@@ -1,0 +1,19 @@
+Foram realizados 4 testes no total, para demonstrar as capacidades do serviço de streaming
+
+Todos os testes foram replicados duas vezes, com resultados similares porém com leves variaçẽos, uma vez na versão simplificada, e uma vez com todos os pacotes enviados e recebidos sendo marcados no log.
+
+Os logs são por parte do servidor, e dos clientes em conjunto (neste caso, estão no mesmo local e podem escrever no mesmo arquivo)
+
+ - Teste 1:
+    A transmissão 'normal', com o servidor iniciando, e o cliente recebendo todos os pacotes, em ordem, e sem perda devido a interrupções forçadas
+ 
+ - Teste 2:
+    A transmissão inicia com o Cliente 1, e logo em seguida, o Cliente 2 começa a escutar a transmissão, perdendo alguns pacotes que ja haviam sido enviados
+
+ - Teste 3:
+    O Cliente 1 faz a conexão inicial e começa a receber os dados, porém é interrompido no meio da transmissão, logo em sequencia o Cliente 2 inicia a recepção dos dados
+
+ - Teste 4:
+    O Cliente 1 inicia a transmissão, o Cliente 2 inicia a receber na sequencia, porém é interrompido, após isso, o cliente 3 recebe dados.
+
+Em todas as transmissões os dados de data.json foram enviados, tanto total como parcialmente, dependendo do teste.
