@@ -1,0 +1,24 @@
+ client 1 | 2023-11-06 22:00:44,955 INFO     Starting UDP client 1
+ client 1 | 2023-11-06 22:00:44,955 INFO     Sent register message to server 127.0.0.1:7070
+ client 2 | 2023-11-06 22:00:46,271 INFO     Starting UDP client 2
+ client 2 | 2023-11-06 22:00:46,271 INFO     Sent register message to server 127.0.0.1:7070
+ client 3 | 2023-11-06 22:00:47,288 INFO     Starting UDP client 3
+ client 3 | 2023-11-06 22:00:47,288 INFO     Sent register message to server 127.0.0.1:7070
+ client 4 | 2023-11-06 22:00:48,951 INFO     Starting UDP client 4
+ client 4 | 2023-11-06 22:00:48,951 INFO     Sent register message to server 127.0.0.1:7070
+ client 1 | 2023-11-06 22:01:15,219 INFO     Got end of transmission
+ client 2 | 2023-11-06 22:01:15,219 INFO     Got end of transmission
+ client 4 | 2023-11-06 22:01:15,219 INFO     Got end of transmission
+ client 3 | 2023-11-06 22:01:15,219 INFO     Got end of transmission
+ client 2 | 2023-11-06 22:01:15,219 INFO     Lost packets: 13
+ client 1 | 2023-11-06 22:01:15,219 INFO     Lost packets: 0
+ client 4 | 2023-11-06 22:01:15,219 INFO     Lost packets: 39
+ client 3 | 2023-11-06 22:01:15,219 INFO     Lost packets: 23
+ client 2 | 2023-11-06 22:01:15,219 INFO     Out of order packets: 0
+ client 1 | 2023-11-06 22:01:15,219 INFO     Out of order packets: 0
+ client 4 | 2023-11-06 22:01:15,220 INFO     Out of order packets: 0
+ client 3 | 2023-11-06 22:01:15,220 INFO     Out of order packets: 0
+ client 2 | 2023-11-06 22:01:15,220 INFO     Standard deviation: 1740.362158865337
+ client 1 | 2023-11-06 22:01:15,220 INFO     Standard deviation: 1718.4913638064
+ client 3 | 2023-11-06 22:01:15,220 INFO     Standard deviation: 1755.058499680675
+ client 4 | 2023-11-06 22:01:15,220 INFO     Standard deviation: 1784.9914049417346

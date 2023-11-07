@@ -16,4 +16,8 @@ Os logs são por parte do servidor, e dos clientes em conjunto (neste caso, est�
  - Teste 4:
     O Cliente 1 inicia a transmissão, o Cliente 2 inicia a receber na sequencia, porém é interrompido, após isso, o cliente 3 recebe dados.
 
+ - Teste 5:
+    Os clientes de 1 a 4 recebem os pacotes
+
+
 Em todas as transmissões os dados de data.json foram enviados, tanto total como parcialmente, dependendo do teste.

@@ -1,0 +1,9 @@
+ server   | 2023-11-06 22:00:43,063 INFO     Starting UDP server on 127.0.0.1:7070
+ server   | 2023-11-06 22:00:43,063 INFO     Waiting for any client to register...
+ server   | 2023-11-06 22:00:44,955 INFO     Registered client 127.0.0.1:38136
+ server   | 2023-11-06 22:00:45,065 INFO     Streaming started
+ server   | 2023-11-06 22:00:46,271 INFO     Registered client 127.0.0.1:34212
+ server   | 2023-11-06 22:00:47,288 INFO     Registered client 127.0.0.1:51731
+ server   | 2023-11-06 22:00:48,951 INFO     Registered client 127.0.0.1:42541
+ server   | 2023-11-06 22:01:15,219 INFO     Streaming finished
+ server   | 2023-11-06 22:02:04,322 INFO     Server is shutting down
