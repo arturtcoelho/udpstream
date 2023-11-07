@@ -1,0 +1,141 @@
+Intro
+ - Resumo do que é o trabalho
+ - Link da página do trabalho
+
+Escopo
+- seguidor de linha
+- graficos seguidor
+- metrica (Por que o desvio padrão?)
+
+Implementação
+ - Diagrama de fluxo cliente e servidor
+ - Explicação do diagrama
+ - funciona ao vivo (independente se tem cliente ou nao)
+ - Links para código fonte
+
+Resultados obtidos
+ - Explicação dos logs
+   - Pessoa conectou no meio
+   - Pessoa saiu e outra entrou no lugar
+   - ...
+
+Universidade Federal do Paraná
+Bacharelado em Ciência da Computação
+Artur Temporal Coelho e Vinícius Maurício Ribeiro
+
+Relatório do Trabalho Prático de Redes de Computadores II - Turma 2023/2
+Um Serviço de Stream de Dados
+
+## Introdução
+
+Este relatório se refere ao Trabalho Prático de Redes de Computadores II [link], Prof. Elias P. Duarte Jr.
+Requisitos:
+- Implementar um servidor de streams UDP.
+- Implementar um cliente de streams UDP.
+- Natureza do stream: livre para escolha.
+- O servidor deve ser capaz de atender múltiplos clientes simultaneamente.
+- Deve ser possível configurar via linha de comando o intervalo de tempo em que cada mensagem do stream é transmitida.
+- O número de campos é no mínimo 2, pois obrigatoriamente cada pacote informa sua ordem no stream, começando por 1.
+- Ao encerrar o cliente ele deve produzir estatísticas sobre o uso do UDP: quantos pacotes foram perdidos e quantos chegaram fora de ordem.
+- O cliente deve implementar uma operação sobre os dados recebidos. Exemplo: calcular a média dos valores recebidos.
+- Devem ser apresentados logs para múltiplas execuções.
+- Pelo menos uma das execuções deve ter obrigatoriamente 3 clientes recebendo o stream.
+- Relatório de como foi feito o trabalho e quais foram os resultados obtidos em uma página HTML
+- Na entrega:
+  - link da página web.
+  - Acrescente a todo programa a terminação ".txt" para ser possível visualizar o código fonte no navegador.
+  - Logs de execução dos processos cliente/servidores, que demonstrem a execução correta destes processos.
+
+## Escopo
+
+O trabalho simula o stream de dados de um robô seguidor de linha. À medida que o robô percorre a linha, o servidor - executando no robô - 
+disponibiliza os dados dos sensores na rede. Os clientes consomem esses dados em tempo real.
+
+Como os autores deste trabalho são integrantes da Equipe de Robótica Yapira da UFPR, os dados obtidos são valores reais de um robô seguidor
+de linha.
+
+O robô utilizado possui uma matriz com 8 sensores de reflitância, posicionados lado a lado. Cada dado enviado pelo robô representa a posição
+da linha em relação aos sensores, que varia de 0 a 7000:
+ - 0 indica que a linha está diretamente abaixo do sensor 0 (mais à esquerda)
+ - 1000 indica que a linha está diretamente abaixo do sensor 1 (ao lado do sensor 0)
+ - 2000 indica que a linha está diretamente abaixo do sensor 2
+ - ...
+ - 7000 indica que a linha está diretamente abaixo do sensor 7 (mais à direita)
+
+Um valor de 3500, por exemplo, indica que a linha está entre os sensores 3 e 4.
+
+[Gráfico com exemplo de execução do teste real]
+
+Em um caso ideal, o gráfico deveria ser apenas uma linha reta com valor de 3500, indicando que o robô permaneceu sempre no centro da linha.
+
+Os dados coletados são utilizados para análise de performance do seguidor de linha.
+Uma das métricas utilizadas para essa avaliação é o desvio padrão. Como o desvio padrão mede a variação dos dados em relação à média,
+quanto maior o desvio padrão, mais instável e errádico é o comportamento do robô.
+Essa métrica foi escolhida para representar a operação que os clientes devem implementar sobre os dados recebidos.
+
+## Implementação
+
+[diagrama servidor]
+[diagrama cliente]
+
+### Mensagens do Servidor
+O servidor pode enviar as seguintes mensagens, codificadas como string:
+ - fim de transmissão ("end"): Envia para todos os clientes registrados, assim que a stream termina;
+ - mensagem de dados ("<numero do pacote> <dado>"): Mensagem com a leitura dos sensores e a ordem do pacote. É enviada para todos os clientes registrados;
+
+O servidor pode receber as seguintes mensagens, codificadas como string:
+ - registro ("register"): Adiciona o endereço e porta do cliente na lista de clientes registrados.
+ - logout ("quit"): Remove o endereço e porta do cliente na lista de clientes registrados.
+
+### Observações Importates do Servidor
+ Para que o seguidor comece o stream dos dados, deve haver pelo menos um cliente registrado.
+ Se algum cliente fizer o logout (ou parar de receber os dados) e posteriormente fizer o registro, os dados emitidos enquanto o cliente estava ausente não serão retransmitidos.
+ Se qualquer cliente se conectar após o início do stream, inevitavelmente já terá perdido pacotes. Esse pacotes perdidos serão contabilizados como pacotes perdidos
+ Após o início do stream, mesmo se todos os clientes fizerem logout, o stream continuará normalmente até o final da execução do robô.
+ A leitura dos sensores de linha é simulada através da iteração dos dados coletados.
+
+ Para mais detalhes da implementação, ver código fonte do servidor (link)
+
+### Mensagens do Cliente
+O cliente pode enviar as seguintes mensagens, codificadas como string:
+ - registro ("register"): Obrigatório envio para começar a receber os dados;
+ - logout ("quit"): Quando o cliente desejar encerrar a conexão.
+
+O cliente pode receber as seguintes mensagens, codificadas como string:
+ - mensagem de dados ("<numero do pacote> <dado>"): Mensagem com a leitura dos sensores e a ordem do pacote. Enviada durante o streaming.
+ - fim de transmissão ("end"): Sinaliza fim do streaming de dados.
+
+ ## Observações Importantes do Cliente
+ A única forma do cliente encerrar a conexão com o envio do logout é se o usuário interromper o programa (Ctrl+c)
+ O cliente não recebe mensagem do servidor caso o registro não tiver sido realizado. Nesse caso, o socket dará timeout, as estatísticas
+ geradas serão sobre 0 (zero) pacotes.
+ O timeout do socket é de 5 segundos. Caso a mensagem de fim de transmissão não tiver sido recebida, o timeout garante que o cliente não
+ fique preso esperando os dados ad infinitum.
+
+ Para mais detalhes da implementação, ver código fonte do servidor (cliente)
+
+ ## Resultados Obtidos
+
+ Foram realizados 4 testes no total, para demonstrar as capacidades do serviço de streaming
+
+Todos os testes foram replicados duas vezes, com resultados similares porém com leves variações: uma vez na versão simplificada, e uma vez com todos os pacotes enviados e recebidos sendo marcados no log.
+
+Os logs são por parte do servidor, e dos clientes em conjunto (neste caso, estão no mesmo local e podem escrever no mesmo arquivo)
+
+ - Teste 1:
+    A transmissão 'normal', com o servidor iniciando, e o cliente recebendo todos os pacotes, em ordem, e sem perda devido a interrupções forçadas
+ 
+ - Teste 2:
+    A transmissão inicia com o Cliente 1, e logo em seguida, o Cliente 2 começa a escutar a transmissão, perdendo alguns pacotes que ja haviam sido enviados
+
+ - Teste 3:
+    O Cliente 1 faz a conexão inicial e começa a receber os dados, porém é interrompido no meio da transmissão, logo em sequencia o Cliente 2 inicia a recepção dos dados
+
+ - Teste 4:
+    O Cliente 1 inicia a transmissão, o Cliente 2 inicia a receber na sequencia, porém é interrompido, após isso, o cliente 3 recebe dados.
+
+ - Teste 5:
+    Os clientes de 1 a 4 recebem os pacotes
+
+
+Em todas as transmissões os dados (link) foram enviados, tanto total como parcialmente.
