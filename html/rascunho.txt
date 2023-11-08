@@ -69,9 +69,10 @@ Um valor de 3500, por exemplo, indica que a linha está entre os sensores 3 e 4.
 Em um caso ideal, o gráfico deveria ser apenas uma linha reta com valor de 3500, indicando que o robô permaneceu sempre no centro da linha.
 
 Os dados coletados são utilizados para análise de performance do seguidor de linha.
-Uma das métricas utilizadas para essa avaliação é o desvio padrão. Como o desvio padrão mede a variação dos dados em relação à média,
-quanto maior o desvio padrão, mais instável e errádico é o comportamento do robô.
-Essa métrica foi escolhida para representar a operação que os clientes devem implementar sobre os dados recebidos.
+Uma das métricas empregadas para essa análise é o desvio padrão, que quantifica a variação dos dados
+em relação à média. Quanto maior o valor do desvio padrão, maior a instabilidade e imprevisibilidade no
+comportamento do robô. Portanto, essa foi a operação escolhida que os clientes devem implementar sobre os dados recebidos.
+
 
 ## Implementação
 
